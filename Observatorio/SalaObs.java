@@ -12,7 +12,9 @@ public class SalaObs {
 
     //Para silla de ruedas
     private final Condition silla= entrar.newCondition();
-    int limite=10; boolean sillaEspera=false; boolean sillaRecorriendo=false;
+    int limite = 50;
+    boolean sillaEspera = false;
+    boolean sillaRecorriendo = false;
 
     //Para mantenimiento
     int contadorMantenimiento; boolean mantenimientoEspera=false; boolean mantenimientoEnCurso=false;
@@ -34,7 +36,8 @@ public class SalaObs {
     public void ingresar(VisitanteObs vis) throws InterruptedException{
         entrar.lock();
         try {
-            while(contador==limite || sillaEspera || mantenimientoEnCurso || mantenimientoEspera){
+            while (contador == limite || sillaEspera || mantenimientoEnCurso
+                    || mantenimientoEspera || investigadorEspera || investigadorEnCurso) {
                 noLlena.await();
             }
             contador++; vis.visitanteIngresado();
@@ -48,11 +51,23 @@ public class SalaObs {
         entrar.lock();
         try{
             contador--;
-            if(mantenimientoEspera && contador==0){
+
+            if (investigadorEspera) {
+                entraInvestigador.signal();
+            }
+
+            else if (mantenimientoEspera && contador == 0 && !investigadorEnCurso
+                    && !investigadorEspera) {
                 salaVacia.signalAll();
-            } else if(sillaEspera && contador<=4 && !mantenimientoEnCurso && !mantenimientoEspera){
+            }
+
+            else if (sillaEspera && contador <= 29 && !mantenimientoEnCurso
+                    && !mantenimientoEspera && !investigadorEnCurso
+                    && !investigadorEspera) {
                 silla.signal();
-            }else{
+            }
+
+            else {
                 noLlena.signalAll();
             }
         } finally{
@@ -64,10 +79,11 @@ public class SalaObs {
         
         entrar.lock();
         try{
-            this.limite=5;
+            this.limite = 30;
             this.sillaEspera=true;
 
-            while(contador>=5 || mantenimientoEnCurso  || mantenimientoEspera){
+            while (contador >= 30 || mantenimientoEnCurso || mantenimientoEspera
+                    || investigadorEnCurso || investigadorEspera) {
                 silla.await();
             }
             contador++; vis.visitanteIngresado();
@@ -87,9 +103,16 @@ public class SalaObs {
         entrar.lock();
         try{
             sillaRecorriendo=false;
-            limite=10;
+            limite = 50;
             contador--;
-            noLlena.signalAll();
+            if (investigadorEspera) {
+                entraInvestigador.signal();
+            } else if (mantenimientoEspera && contador == 0) {
+                salaVacia.signal();
+            } else {
+                noLlena.signalAll();
+            }
+
         }finally{entrar.unlock();}
     }
 
@@ -97,13 +120,17 @@ public class SalaObs {
         entrar.lock();
         try{
             if(!mantenimientoEnCurso){
-                mantenimientoEspera=true;
-                while(contador>0){
+                mantenimientoEspera = true;
+
+                while (contador > 0 || investigadorEspera || investigadorEnCurso) {
+
                     salaVacia.await();
+
                 }
 
                 mantenimientoEspera=false;
                 mantenimientoEnCurso=true;
+
             }
             contadorMantenimiento++;
         }finally{
@@ -118,7 +145,11 @@ public class SalaObs {
             if(contadorMantenimiento==0){
                 mantenimientoEnCurso=false;
 
-                if(sillaEspera && contador<=4){
+                if (investigadorEspera) {
+                    entraInvestigador.signal();
+                }
+
+                else if (sillaEspera && contador <= 29) {
                     silla.signal();
                 }
 
@@ -129,5 +160,39 @@ public class SalaObs {
         }
     }
 
+    public void iniciarInvestigacion() throws InterruptedException {
+        entrar.lock();
+        try {
+            investigadorEspera = true;
+
+            while (contador > 0
+                    || sillaRecorriendo
+                    || mantenimientoEnCurso) {
+                entraInvestigador.await();
+            }
+            investigadorEspera = false;
+            investigadorEnCurso = true;
+
+        } finally {
+            entrar.unlock();
+        }
+    }
+
+    public void salirInvestigacion() {
+        entrar.lock();
+        try {
+            investigadorEnCurso = false;
+            if (mantenimientoEspera && contador == 0) {
+                salaVacia.signalAll();
+            }
+            if (sillaEspera && contador >= 29
+                    && !mantenimientoEnCurso && !mantenimientoEspera) {
+                silla.signal();
+            }
+            noLlena.signalAll();
+        } finally {
+            entrar.unlock();
+        }
+    }
     
 }

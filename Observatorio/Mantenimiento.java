@@ -8,7 +8,7 @@ public class Mantenimiento implements Runnable{
 
     public void hacerMantenimiento(){
         try {
-            System.out.println("El personal "+id+" esta ralizando mantenimiento");
+            System.out.println("El personal " + id + " esta realizando mantenimiento");
             Thread.sleep(2000);
             limpio=true;
             System.out.println("El personal "+id+" termino el mantenimiento");

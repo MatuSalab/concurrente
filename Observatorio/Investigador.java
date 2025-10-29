@@ -10,7 +10,7 @@ public class Investigador implements Runnable{
     public void investigar(){
         try {
             System.out.println("Investigador "+id+" esta investigando");
-            Thread.sleep(5000);
+            Thread.sleep(2500);
             System.out.println("Investigador "+id+" termino su investigacion");
         } catch (Exception e) {
             // TODO: handle exception
@@ -19,11 +19,12 @@ public class Investigador implements Runnable{
 
     public void run(){
         try {
-            sala.ingresarInvestigador();
+            sala.iniciarInvestigacion();
             investigar();
-            sala.salirInvestigador();
         } catch (Exception e) {
             // TODO: handle exception
+        } finally {
+            sala.salirInvestigacion();
         }
     }
     
