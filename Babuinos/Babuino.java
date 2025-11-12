@@ -9,11 +9,11 @@ public class Babuino implements Runnable{
 
     public void pasarCuerda(){
         try{
-            if(lado=='D'){
+            if (lado == 2) {
                 System.out.println("El babuino "+id+" esta cruzando la cuerda del lado derecho al izquierdo");
                 Thread.sleep(500);
                 System.out.println("El babuino "+id+" termino de cruzar del lado derecho al izquierdo");
-            }else if(lado=='I'){
+            } else if (lado == 1) {
                 System.out.println("El babuino "+id+" esta cruzando la cuerda del lado izquierdo al derecho");
                 Thread.sleep(500);
                 System.out.println("El babuino "+id+" termino de cruzar del lado izquierdo al derecho");

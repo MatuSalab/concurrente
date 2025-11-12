@@ -1,9 +1,12 @@
 package Observatorio;
 
 public class VisitanteObs implements Runnable{
-    int id; SalaObs sala; boolean sillaDeRuedas;
+    int id;
+    SalaObsMoni sala;
+    boolean sillaDeRuedas;
     boolean ingreso;
-    public VisitanteObs(int i, SalaObs s, boolean si){
+
+    public VisitanteObs(int i, SalaObsMoni s, boolean si) {
         id=i; sala=s; sillaDeRuedas=si; ingreso=false;
 
     }
@@ -42,16 +45,7 @@ public class VisitanteObs implements Runnable{
         }
     }
 
-    public void run(){
-        /*while(!ingreso){
-            if(usaSilla()){
-                sala.limitar();
-                sala.ingresarSilla(this);
-            } else{
-                sala.ingresar(this);
-            }
-            sala.salir();
-        } */
+    public void run() {
         try{
             if(usaSilla()){
                 sala.ingresarSilla(this);

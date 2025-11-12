@@ -2,8 +2,10 @@ package Observatorio;
 
 public class Investigador implements Runnable{
 
-    int id; SalaObs sala;
-    public Investigador(int i, SalaObs s){
+    int id;
+    SalaObsMoni sala;
+
+    public Investigador(int i, SalaObsMoni s) {
         id=i; sala=s;
     }
 

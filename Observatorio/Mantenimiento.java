@@ -1,8 +1,11 @@
 package Observatorio;
 
 public class Mantenimiento implements Runnable{
-    int id; SalaObs sala; boolean limpio;
-    public Mantenimiento(int i, SalaObs s){
+    int id;
+    SalaObsMoni sala;
+    boolean limpio;
+
+    public Mantenimiento(int i, SalaObsMoni s) {
         id=i; sala=s; limpio=false;
     }
 

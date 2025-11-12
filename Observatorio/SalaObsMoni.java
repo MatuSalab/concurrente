@@ -3,7 +3,7 @@ package Observatorio;
 public class SalaObsMoni {
     // Estado compartido
     private int contador = 0;
-    private int limite = 50;
+    private int limite = 10;
 
     // Silla de ruedas
     private boolean sillaEspera = false;
@@ -45,10 +45,10 @@ public class SalaObsMoni {
     // ================= Visitante en silla de ruedas =================
     public synchronized void ingresarSilla(VisitanteObs vis) throws InterruptedException {
         // Anuncia prioridad y baja temporalmente el límite
-        this.limite = 30;
+        this.limite = 5;
         this.sillaEspera = true;
 
-        while (contador >= 30
+        while (contador >= 5
                 || mantenimientoEnCurso || mantenimientoEspera
                 || investigadorEnCurso || investigadorEspera) {
             wait();
@@ -65,7 +65,7 @@ public class SalaObsMoni {
 
     public synchronized void salirSilla() {
         sillaRecorriendo = false;
-        limite = 50;
+        limite = 10;
         contador--;
         notifyAll();
     }

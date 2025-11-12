@@ -7,8 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SalaObs {
     int contador; 
     private final Lock entrar= new ReentrantLock();
-    private final Condition noLlena= entrar.newCondition();
-    //private final Condition noVacio= entrar.newCondition();
+    private final Condition noLlena = entrar.newCondition();
 
     //Para silla de ruedas
     private final Condition silla= entrar.newCondition();
